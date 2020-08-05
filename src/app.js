@@ -1,10 +1,19 @@
 const express = require("express");
 const mongoose = require("mongoose");
+const bodyParser = require("body-parser");
+const cors = require('cors')
+
+require("dotenv").config();
 
 const app = express();
 
-const PORT = 8282;
-const URL_DB = "mongodb://localhost:27017/user";
+const PORT = process.env.PORT || 8000;
+const URL_DB = process.env.URL_DB; 
+
+app.use(cors())
+app.use(bodyParser.urlencoded({ extended: false }));
+app.use(bodyParser.json());
+
 
 app.use(require("./routes/loginRoutes"));
 
