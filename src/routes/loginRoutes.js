@@ -1,26 +1,48 @@
 const express = require("express");
-const { verify } = require("../helper")
-
-
+const User = require("../models/userModel");
+const { verify } = require("../helper");
 
 const app = express();
 
-app.get("/homeLogin/:id", (req, res) => {
-  const id = req.params.id;
-
-  res.json({ messague: "Hola mundo Get", id });
-});
-
-
 app.post("/loginGoogle", async (req, res) => {
   const token = req.body.idtoken;
+  try {
+    const googleUser = await verify(token);
 
-  const prueba = await verify(token);
+    if (googleUser.err === true) {
+      return res.status(404).json({ messague: "Dominio incorrecto", error: true });
+    }
 
-  if (prueba === true)
-    return res.status(400).json({ err: "El dominio del email no es valido" });
+    //validacion (si el usuario ya esta registrado)
 
-  return res.json({ messague: "listo para guardar" });
+    const searchUser = await User.find({ email: googleUser.email });
+    if (Object.keys(searchUser).length !== 0) {
+      return res.json({
+        name: googleUser.firstName,
+        email: googleUser.email,
+        messague: "El usuario se encuentra registrado",
+        error: false
+      });
+      
+    }
+
+    const UserDB = new User({
+      name: googleUser.name,
+      urlImage: googleUser.img,
+      email: googleUser.email,
+    });
+
+    const newUser = await UserDB.save();
+
+    return res.json({
+      name: newUser.firstName,
+      email: newUser.email,
+      error: true,
+      messague: "Guardado con exito",
+    });
+  } catch (err) {
+    return res.status(404).json({ err });
+  }
 });
 
 module.exports = app;
