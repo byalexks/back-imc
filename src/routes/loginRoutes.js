@@ -18,7 +18,7 @@ app.post("/loginGoogle", async (req, res) => {
     const searchUser = await User.find({ email: googleUser.email });
     if (Object.keys(searchUser).length !== 0) {
       return res.json({
-        name: googleUser.firstName,
+        name: googleUser.name,
         email: googleUser.email,
         messague: "El usuario se encuentra registrado",
         error: false
@@ -35,9 +35,9 @@ app.post("/loginGoogle", async (req, res) => {
     const newUser = await UserDB.save();
 
     return res.json({
-      name: newUser.firstName,
+      name: newUser.name,
       email: newUser.email,
-      error: true,
+      error: false,
       messague: "Guardado con exito",
     });
   } catch (err) {
