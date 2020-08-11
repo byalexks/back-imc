@@ -17,6 +17,7 @@ const verify = async (token) => {
   return {
     err: false,
     name: payload.name,
+    img: payload.picture,
     email: payload.email,
     img: payload.picture
   };
