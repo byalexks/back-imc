@@ -19,7 +19,7 @@ const verify = async (token) => {
     name: payload.name,
     img: payload.picture,
     email: payload.email,
-    img: payload.picture
+    img: payload.picture,
   };
 };
 

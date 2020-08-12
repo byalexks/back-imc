@@ -10,7 +10,12 @@ app.post("/loginGoogle", async (req, res) => {
     const googleUser = await verify(token);
 
     if (googleUser.err === true) {
-      return res.status(404).json({ messague: "El correo con el que intenta ingresar no tiene acceso", error: true });
+      return res
+        .status(404)
+        .json({
+          messague: "El correo con el que intenta ingresar no tiene acceso",
+          error: true,
+        });
     }
 
     //validacion (si el usuario ya esta registrado)
@@ -18,12 +23,9 @@ app.post("/loginGoogle", async (req, res) => {
     const searchUser = await User.find({ email: googleUser.email });
     if (Object.keys(searchUser).length !== 0) {
       return res.json({
-        name: googleUser.name,
-        email: googleUser.email,
-        img: googleUser.img,
-        error: false
+        token,
+        error: false,
       });
-      
     }
 
     const UserDB = new User({
@@ -34,10 +36,7 @@ app.post("/loginGoogle", async (req, res) => {
 
     const newUser = await UserDB.save();
     return res.json({
-      name: newUser.name,
-      email: newUser.email,
-      img: newUser.urlImage,
-      error: false,
+      token,
       messague: "Guardado con exito",
     });
   } catch (err) {
