@@ -1,13 +1,35 @@
 const express = require("express");
+const jwt = require('jsonwebtoken')
+
 const User = require("../models/userModel");
+
 const { verify } = require("../helper");
+const {verifyToken} = require("../../middlewares/authentication")
 
 const app = express();
 
+app.get('/home', verifyToken ,(req, res) => {
+
+  const dataUser = req.user
+
+  return res.json({
+    ok: true,
+    user: dataUser
+  })
+
+
+})
+
+// ----------------------------------------------------------------------------------------------\\
+
 app.post("/loginGoogle", async (req, res) => {
-  const token = req.body.idtoken;
+  const tokenGoogle = req.body.idtoken;
   try {
-    const googleUser = await verify(token);
+    const googleUser = await verify(tokenGoogle);
+
+    const token = jwt.sign({
+      user: googleUser,
+    }, process.env.SEED, {expiresIn: process.env.TIMEEXPIRED})
 
     if (googleUser.err === true) {
       return res
