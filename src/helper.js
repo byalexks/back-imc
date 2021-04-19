@@ -3,17 +3,11 @@ const client = new OAuth2Client(process.env.CLIENT_ID);
 
 // Configuraciones de google
 const verify = async (token) => {
-  const validDomain = "misena.edu.co";
-
   const ticket = await client.verifyIdToken({
     idToken: token,
     audience: process.env.CLIENT_ID,
   });
   const payload = ticket.getPayload();
-  const domain = payload["hd"];
-
-  if (domain === undefined || domain !== validDomain) return { err: true };
-
   return {
     err: false,
     name: payload.name,
@@ -23,6 +17,14 @@ const verify = async (token) => {
   };
 };
 
+const badRequest = (res, messageError) => {
+  return res.status(400).json({
+    error: true,
+    messageError,
+  });
+};
+
 module.exports = {
   verify,
+  badRequest
 };

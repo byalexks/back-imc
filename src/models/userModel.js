@@ -14,6 +14,7 @@ let userSchema = new Schema({
   email: {
     type: String,
     required: [true, "El email es requerido"],
+    unique: true
   },
 });
 
