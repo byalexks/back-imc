@@ -5,9 +5,10 @@ const Imc = require("../models/imcModel");
 
 const app = express();
 
-app.get("/imc", async (req, res) => {
+app.get("/imc/:user", async (req, res) => {
   try {
-    const ImcDb = await Imc.find({}).populate('user');
+    const { user } = await req.params;
+    const ImcDb = await Imc.find({user})
     const total = await Imc.count();
     res.json({
       error: false,
